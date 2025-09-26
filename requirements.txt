@@ -1,3 +1,0 @@
-TTS
-flask
-torch
