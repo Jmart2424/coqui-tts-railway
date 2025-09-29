@@ -5,13 +5,12 @@ import base64
 import tempfile
 from flask import Flask, request, jsonify, send_file
 from TTS.api import TTS
-import TTS
 
 app = Flask(__name__)
 
 # === EASY VOICE SWITCHING ===
 # Just change this one variable to switch voices!
-VOICE_MODEL = "jenny"  # Change this to switch voices
+VOICE_MODEL = "jenny"  # Using Jenny voice as requested
 
 # Voice presets (add more as you find them)
 VOICE_MODELS = {
@@ -66,7 +65,7 @@ def generate():
             output_path,
             mimetype='audio/wav',
             as_attachment=True,
-            download_name='output.wav'
+            download_name='data'  # Changed to match DeepGram output format
         )
         
         @response.call_on_close
@@ -112,8 +111,9 @@ def generate_base64():
 @app.route('/list_all_models', methods=['GET'])
 def list_all_models():
     try:
-        # This lists ALL models Coqui has available
-        all_models = TTS.TTS().list_models()
+        # Direct instantiation to list models
+        from TTS import TTS as TTS_class
+        all_models = TTS_class().list_models()
         
         # Filter for English models that work on CPU
         english_models = [m for m in all_models if 'en/' in m]
@@ -146,7 +146,7 @@ def test_model():
             output_path,
             mimetype='audio/wav',
             as_attachment=True,
-            download_name='test_voice.wav'
+            download_name='data'  # Changed to match DeepGram output format
         )
         
         @response.call_on_close
